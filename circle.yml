@@ -3,18 +3,19 @@ general:
 
 machine:
   environment:
-    IMAGE_NAME: stigkj/docker-and-mesos-presentation:$CIRCLE_BUILD_NUM.$CIRCLE_BRANCH.$CIRCLE_SHA1
+    IMAGE_NAME: stigkj/docker-and-mesos-presentation
+    IMAGE_NAME_WITH_TAG: stigkj/docker-and-mesos-presentation:$CIRCLE_BUILD_NUM.$CIRCLE_BRANCH.$CIRCLE_SHA1
   services:
     - docker
 
 dependencies:
   override:
     - docker build -t builder .
-    - docker run --rm builder | docker build -t $IMAGE_NAME -
+    - docker run --rm builder | docker build -t $IMAGE_NAME_WITH_TAG -
 
 test:
   override:
-    - docker run -d -p 9200:80 $IMAGE_NAME
+    - docker run -d -p 9200:80 $IMAGE_NAME_WITH_TAG
     - curl --retry 10 --retry-delay 5 -v http://localhost:9200
 
 deployment:
@@ -22,4 +23,5 @@ deployment:
     branch: master
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWD
+      - docker push $IMAGE_NAME_WITH_TAG
       - docker push $IMAGE_NAME
