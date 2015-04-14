@@ -1,0 +1,18 @@
+general:
+  build_dir: presentation
+
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker build -t builder .
+    - docker run --rm builder | docker build -t stigkj/docker-and-mesos-presentation -
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push stigkj/docker-and-mesos-presentation
