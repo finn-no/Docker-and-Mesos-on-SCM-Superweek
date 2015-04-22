@@ -1,6 +1,8 @@
 
 ## docker-swarm
 
+<a href="//docker-and-mesos-presentation.nisgits.net:31000">_</a>
+
 Note:
 docker-swarm is a tool for orchestration of multiple hosts.
 With this you can set up a cluster of hosts. This is a quite

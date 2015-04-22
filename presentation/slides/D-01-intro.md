@@ -4,10 +4,13 @@
 #### Stig Kleppe-Jørgensen, FINN.no
 #### 2015-04-22
 
+<a href="//localdocker:9000">_</a>
+
 Note:
 Hi, my name is Stig. I'm from Norway and work at FINN.no
 
-I'm going to share my opinions with you on Docker and why I think it is great, in addition to Mesos, which I think is the best way of running Docker in production.
+In this talk I will give you a quick overview of Docker and why I think it is great,
+moving onto Mesos which I think is the best way of running Docker in production.
 
 First I like to know how many here have played some with Docker? Anyone using it properly, like in CI or anything pre-prod? What about in production? And what about Mesos?
 
