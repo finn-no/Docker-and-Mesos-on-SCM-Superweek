@@ -17,19 +17,5 @@
         }
       ]
     }
-  },
-  "healthChecks": [
-    {
-      "gracePeriodSeconds": 120,
-      "intervalSeconds": 30,
-      "maxConsecutiveFailures": 3,
-      "path": "/",
-      "portIndex": 0,
-      "protocol": "HTTP",
-      "timeoutSeconds": 5
-    }
-  ],
-  "constraints": [
-    [ "hostname", "UNIQUE" ]
-  ]
+  }
 }
