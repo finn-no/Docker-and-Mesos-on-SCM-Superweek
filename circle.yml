@@ -24,4 +24,4 @@ deployment:
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWD
       - docker push $IMAGE_NAME_WITH_TAG
-      - ../tools/deploy_to_mesos.sh $CIRCLE_BUILD_NUM.$CIRCLE_BRANCH.$CIRCLE_SHA1 marathon.js
+      - ../tools/deploy_to_mesos.sh $CIRCLE_BUILD_NUM.$CIRCLE_BRANCH.$CIRCLE_SHA1 ./marathon.json
