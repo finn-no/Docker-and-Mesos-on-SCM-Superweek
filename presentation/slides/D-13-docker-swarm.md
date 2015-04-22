@@ -1,5 +1,5 @@
 
-### docker-swarm
+## docker-swarm
 
 Note:
 docker-swarm is a tool for orchestration of multiple hosts.

@@ -1,5 +1,5 @@
 
-### docker-compose
+## docker-compose
 
 Note:
 docker-compose is the tool used for single-host orchestration of several

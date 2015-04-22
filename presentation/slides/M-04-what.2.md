@@ -1,20 +1,12 @@
-## What is Mesos?
+## Features
 
 * Highly-elastic, highly-available and fault-tolerant
 * Makes it very easy to deploy new services
+* Native isolation between tasks
 * Can mix different types of workloads on the same machines
-  * long-running (web apps)
-  * batch
-  * CI
-
-<image src="images/system_setup.png"/>
 
 Note:
 So then, what is Mesos really?
-
-Here you can see a typical installation; 3 masters using Zookeeper
-to find each other and several slaves which runs on the machines
-running the services.
 
 Instead of sharing resources statically, Mesos will dynamically
 share the resources where they are needed, for example by putting
@@ -29,6 +21,9 @@ management tool.
 
 Just push a description of the service to Mesos and it will be
 started up on a machine that can handle it.
+
+It has native isolation between tasks either through cgroups or
+by deploying the services as Docker containers
 
 This is all well and good, but why choose this instead of some of
 the other offerings out there, like Kubernetes from Google? The
