@@ -11,6 +11,7 @@ CMD [ "python", "/app/server.py" ]
 ```
 ```bash
 $ docker build -t my_awesome_application:1 .
+```
 ```bash
 $ docker images | grep my_awesome_application
 ```
@@ -29,10 +30,10 @@ First, we write a file that describes the image with:
 
 Such a file is called a Dockerfile.
 
-Now, there are more instructions than shown here, but they are mostly
+A Dockerfile can have more instructions than shown here, but they are mostly
 in these 3 categories.
 
-Typically, you will have only 1 application pr image, which fits very well
+Another thing, you will typically have only 1 application pr image, which fits very well
 with doing microservices. That is, 1 image is 1 microservice. You will
 probably get into use cases where you find that you need several applications
 pr image, but I think it is a good idea to try with 1 pr image first.

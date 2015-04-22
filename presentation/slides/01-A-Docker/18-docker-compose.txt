@@ -35,4 +35,6 @@ services. To start the stack, just use docker-compose up. Then use docker-compos
 list all running services, docker-compose logs to show the stdout/stderr of all services
 and docker-compose scale to increase/decrease number of instances of the services.
 
-Now it would be nice to expand the orchestration onto several hosts
+_docker-compose up -d_
+
+Ok, but this is only single-host; what about multi-host orchestration?

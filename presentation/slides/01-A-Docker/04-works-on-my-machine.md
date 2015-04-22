@@ -1,5 +1,5 @@
 
-## “but, it works on my machine!”
+### “but, it works on my machine!”
 
 <img src="images/the-challenge.png">
 

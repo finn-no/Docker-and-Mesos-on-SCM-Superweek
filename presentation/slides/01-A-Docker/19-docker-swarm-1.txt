@@ -1,0 +1,11 @@
+
+### Orchestration of multiple hosts
+
+#### docker-swarm to the rescue
+
+Note:
+docker-swarm is the last of the tools in the docker-suite, and it will help
+us with orchestration of multiple hosts.
+
+It is the newest tool in the suite, so the user experience is not as nice
+as it should be.

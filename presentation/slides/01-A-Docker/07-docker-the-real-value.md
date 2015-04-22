@@ -9,4 +9,4 @@ I couldn't agree more. Containers are not a new concept. I think FreeBSD got the
 
 So how did Docker do it? I think it happened because they made containers easy to understand and easy to use. Just like a well-behaved Unix-tool: do one thing well and have well behaved inputs and outputs
 
-As it is, Docker now provides the language in how we describe and talk about containers. It also defines what basic storage, networking, and services are available to the containers. Furthermore, it helps to ensure that applications written for Docker stay portable across varying types of infrastructure
+As it is, Docker now provides the language in which we describe and talk about containers. It also defines what basic storage, networking, and services are available to the containers. Furthermore, it helps to ensure that applications written for Docker stay portable across varying types of infrastructure

@@ -1,5 +1,5 @@
 
-## Run a docker daemon in the cloud
+## docker daemon in the cloud
 
 ```bash
 $ docker-machine create --driver amazonec2 <many settings> remote-ec2

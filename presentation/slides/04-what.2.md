@@ -20,7 +20,7 @@ Instead of sharing resources statically, Mesos will dynamically
 share the resources where they are needed, for example by putting
 a service on any machine which has room for more.
 
-And if a machine crashes or otherwise becomes unusable, any
+And if a machine crashes or otherwise becomes unusable, all
 services running on that machine are moved to other machines.
 
 This also makes it very simple to deploy new services. No need

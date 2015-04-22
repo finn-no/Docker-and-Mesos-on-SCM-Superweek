@@ -1,0 +1,35 @@
+
+### Orchestration for multiple hosts
+
+```bash
+$ docker run swarm create
+bbec884c7b0f338f764052e7241e8344
+```
+```bash
+$ docker-machine create --swarm  --swarm-discovery token://bbec8...  ....
+```
+```bash
+$ eval $(docker-machine env --swarm)
+```
+
+Note:
+First one must run the tool to create a discovery token
+Then a swarm master and 1 or more swarm nodes are created with docker-machine
+Then we set the environment variables for the cluster so the docker cli can find it
+
+Now, I have cheated and have already created a 3 node cluster on Amazon.
+
+After creating it, it is quite transparent to use. Just use the regular docker cli:
+
+_docker ps_
+
+But docker-swarm is still a little limited, nice to play with and show off in demos,
+but far from ready to put in production.
+
+For a better and more mature and battle tested solution, we will look at Mesos.
+
+
+
+Batteries included, but removable
+
+What's nice with all these docker tools are that they setup a nice

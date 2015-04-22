@@ -8,8 +8,6 @@
 
 Note:
 So how does this work? Mesis is a 2-level scheduler, which means
-it delegates to frameworks the responsibility for actually doing
-anything with the resources it finds. So if you have some tasks
-that need to be distributed on many machines, you can develop a
-Mesos framework, aka plugin, that gets resources from Mesos and
-runs its task on these resources.
+it will find some idle resources and send these to plugins, or
+frameworks as they are called, and let them decide what to do
+with the resources.
