@@ -3,8 +3,8 @@ general:
 
 machine:
   environment:
-    IMAGE_NAME: stigkj/docker-and-mesos-presentation
-    IMAGE_NAME_WITH_TAG: stigkj/docker-and-mesos-presentation:$CIRCLE_BUILD_NUM.$CIRCLE_BRANCH.$CIRCLE_SHA1
+    TAG: $CIRCLE_BUILD_NUM.$CIRCLE_BRANCH.$CIRCLE_SHA1
+    IMAGE_NAME_WITH_TAG: stigkj/docker-and-mesos-presentation:$TAG
   services:
     - docker
 
@@ -24,4 +24,4 @@ deployment:
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWD
       - docker push $IMAGE_NAME_WITH_TAG
-      - docker push $IMAGE_NAME:latest
+      - ../tools/deploy_to_mesos.sh $CIRCLE_BUILD_NUM.$CIRCLE_BRANCH.$CIRCLE_SHA1 marathon.js
