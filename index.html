@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Prez</title>
+
+    <meta name="description" content="-- DESCRIPTION HERE --">
+    <meta name="author" content="-- AUTHOR HERE --">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/simple.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="css/highlight/styles/zenburn.css" id="highlight-theme">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <link rel="stylesheet" href="css/custom.css">
+
+  </head>
+
+  <body>
+
+    <div class="reveal">
+      <div class="slides"><section id="intro" class="slide">
+<h1>Docker &amp; Mesos</h1><h2>a match made in heaven</h2><h4>Stig Kleppe-Jørgensen, FINN.no</h4><h4>2015-04-22</h4><p><a href="//localdocker:9000">_</a></p><aside class="notes"><p>Hi, my name is Stig. I&#39;m from Norway and work at FINN.no</p>
+<p>In this talk I will give you a quick overview of Docker and why I think it is great,
+moving onto Mesos which I think is the best way of running Docker in production.</p>
+<p>First I like to know how many here have played some with Docker? Anyone using it properly, like in CI or anything pre-prod? What about in production? And what about Mesos?</p>
+<p><em>reload page</em></p>
+<p>Oh, sorry, I forgot to start up the presentation server. And, if you were wondering...yes I do run it through Docker.</p>
+<p><em>docker run -d -p 9000:9000 -v <code>pwd</code>:/pres stigkj/prez-builder prez --serve --such-notes &amp;&amp; open -a Safari <a href="http://localhost:9000">http://localhost:9000</a></em></p></aside>
+</section>
+<section id="why-docker" class="slide">
+<h2>Why Docker?</h2><aside class="notes"><p>Now...why would we need Docker?</p></aside>
+</section>
+<section id="dependency-hell" class="slide">
+<h3>Dependency hell</h3><p><img src="images/the-challenge.png"></p><aside class="notes"><p>This image shows two of the big use cases.</p>
+<p>Firstly, we see a rapid increase in the number of technology stacks that an IT organization needs to support.
+This creates a lot of overhead and also result in hard-to-solve problems like dependency hell.</p>
+<p>By utilizing Docker, we can create images which shields applications from each other by containing everything necessary to run them.</p></aside>
+</section>
+<section id="works-on-my-machine" class="slide">
+<h3>“but, it works on my machine!”</h3><p><img src="images/the-challenge.png"></p><aside class="notes"><p>Secondly, we often have this problem that an application works on your machine, but not on another.</p>
+<p>Here Docker&#39;s image based application wrapping again come to the rescue, shielding the application
+from differences in the different environments it runs on, be it a laptop, CI or production.</p>
+<p>Another contributing factor is that for each run of the container, it will start from the same
+state. Let&#39;s do a small demo of this. Just don&#39;t do this at home, boys and girls :-)</p>
+<p><em>docker run --rm -it busybox /bin/sh</em>, <em>rm -rf /var</em>, <em>docker run --rm -it busybox /bin/sh</em>, <em>ls /var</em></p></aside>
+</section>
+<section id="vms-can-do-this" class="slide">
+<h3>But VMs can do this</h3><aside class="notes"><p>Some might be saying VMs fixed these problems.</p></aside>
+</section>
+<section id="vms-can-do-this-not" class="slide">
+<h3>But VMs can do this...not!</h3><p>size, performance, hardware-centric</p><aside class="notes"><p>I&#39;m not saying that is wrong, but VMs are quite limited.</p>
+<p>Size: VMs are very large which makes them impractical to store and transfer.</p>
+<p>Performance: running VMs consumes significant CPU and memory, which makes them impractical in many scenarios, for example local development of multi-tier applications, and large-scale deployment of cpu and memory-intensive applications on large numbers of machines.</p>
+<p><em>not this</em>
+Portability: competing VM environments don&#39;t play well with each other. Although conversion tools do exist, they are limited and add even more overhead.</p>
+<p>Hardware-centric: VMs were designed with machine operators in mind, not software developers. As a result, they offer very limited tooling for what developers need most: building, testing and running their software. For example, VMs offer no help with application versioning, monitoring, configuration, logging or service discovery.</p></aside>
+</section>
+<section id="docker-the-real-value" class="slide">
+<h3>Solomon Hykes, CTO of Docker</h3><p>“The real value of Docker is not technology. <br> It’s getting people to agree on something”</p><aside class="notes"><p>Solomon Hykes, CTO of Docker said:...</p>
+<p>I couldn&#39;t agree more. Containers are not a new concept. I think FreeBSD got them about 15 years ago. But it was Docker that got everybody excited about them.</p>
+<p>So how did Docker do it? I think it happened because they made containers easy to understand and easy to use. Just like a well-behaved Unix-tool: do one thing well and have well behaved inputs and outputs</p>
+<p>As it is, Docker now provides the language in which we describe and talk about containers. It also defines what basic storage, networking, and services are available to the containers. Furthermore, it helps to ensure that applications written for Docker stay portable across varying types of infrastructure</p></aside>
+</section>
+<section id="the-docker-suite" class="slide">
+<h2>The Docker suite</h2><aside class="notes"><p>So to use Docker you have 4 tools to help you out</p></aside>
+</section>
+<section id="docker" class="slide">
+<h2>docker</h2><aside class="notes"><p>The most important is the regular docker cli. This is mainly used for
+building or fetching images and running containers, but has quite a lot
+more it can do.</p>
+<p>A little tips for when you are building images:
+Try to always look for the smallest possible base image. A good example are the staticpython
+base image, which is about 8MB big. Now, the default python-image is about 900MB large. That
+is quite a difference. Imagine having to distribute that 900MB image to a lot of servers!</p></aside>
+</section>
+<section id="docker-machine" class="slide">
+<h2>docker-machine</h2><aside class="notes"><p>docker-machine is next.
+Docker is a client/server architecture, where the server can only run
+on Linux, and then typically in a VM. To create and boot up these VMs,
+docker-machine is used. It can create Linux VMs both locally and remotely.</p>
+<p>Locally it will for example create one inside VirtualBox while remotely
+it has support for several of the cloud providers, like Amazon, Google, etc.</p>
+<p>To switch between the machines one can use environment variables or specify
+which to use on the cli.</p>
+<p><em>docker-machine ls</em>
+<em>docker-machine env local</em></p></aside>
+</section>
+<section id="docker-compose" class="slide">
+<h2>docker-compose</h2><aside class="notes"><p>docker-compose is the tool used for single-host orchestration of several
+containers at the same time, using a configuration file that looks like
+this:</p></aside>
+</section>
+<section id="docker-compose" class="slide">
+<pre><code>$ cat docker-compose.yml
+web:
+  build: .
+  command: python app.py
+  ports:
+   -<span class="ruby"> <span class="hljs-string">"5000:5000"</span>
+</span>  volumes:
+   -<span class="ruby"> .<span class="hljs-symbol">:/code</span>
+</span>  links:
+   -<span class="ruby"> redis
+</span>redis:
+  image: redis
+</code></pre><aside class="notes"><p>Her we define 2 services, the web frontend and the redis data store,
+which are linked together, that is, the python web frontend can lookup
+the redis data store through the dns name redis.</p></aside>
+</section>
+<section id="docker-swarm" class="slide">
+<h2>docker-swarm</h2><p><a href="//docker-and-mesos-presentation.nisgits.net:31000">_</a></p><aside class="notes"><p>docker-swarm is a tool for orchestration of multiple hosts.
+With this you can set up a cluster of hosts. This is a quite
+new tool, so the user experience is a little rough, and it
+is not production ready.</p>
+<p>A better and more mature and battle tested solution, is called Mesos.</p></aside>
+</section>
+<section id="dcos" class="slide">
+<h1>Mesos</h1><h2>The Data Center OS</h2><aside class="notes"><p>Mesos, also called the data center operating system</p></aside>
+</section>
+<section id="what.1" class="slide">
+<h2>Mesos makes the data center(s) look like one big pool of resources which can run all types of workloads at the same time</h2><aside class="notes"><p>So, what is Mesos?</p>
+<p>Simply put, it makes a large pool of resources from all the machines given to it and runs all types of workloads on these resources.</p></aside>
+</section>
+<section>
+<section id="why-why" class="slide">
+<h1>But why?</h1><aside class="notes"><p>Why? First let&#39;s see how many data centers look like today.</p></aside>
+</section>
+<section id="why-why.dc" class="slide" data-background="images/datacenter.png" data-background-size="60%">
+<aside class="notes"><p>Imagine you have several services you would like to run at the same time.
+You get your hands on a bunch of machines...</p></aside>
+</section>
+<section id="why-why.shared" class="slide" data-background="images/shared.png" data-background-size="60%">
+<aside class="notes"><p>...and starts to put the services onto the machines.</p>
+<p>In this picture I only have 2 types of workloads, the green and the red.
+When not using something like Mesos, the services are typically assigned
+to specific machines by setting this up in some kinda configuration management
+tool like Ansible/chef/puppet.</p>
+<p>Now you have 2 problems:</p></aside>
+</section>
+<section id="why-why.most_taken" class="slide" data-background="images/most_taken.png" data-background-size="60%">
+<aside class="notes"><p>Firstly, this makes it hard to dynamically change the resources
+a service can utilize, which is needed whenever the load goes through
+the roof. Changing it in your configuration management tool would
+typically take too long time, most likely being deployed just after
+the load has decreased.</p></aside>
+</section>
+<section id="why-why.all_taken" class="slide" data-background="images/all_taken.png" data-background-size="60%">
+<aside class="notes"><p>Secondly, it is hard to utilize your resources 100%. As services are
+put on specific machines, the load of these machines will follow the
+load of these specific services. So whenever some services have no load,
+the corresponding machines will do nothing.</p>
+<p>And speaking numbers, we typically see a 15-20% resource utilization of
+data centers. When using Mesos or similar systems these numbers are
+doubled.</p></aside>
+</section>
+<section id="why-why.back" class="slide" data-background="images/shared.png" data-background-size="60%">
+<aside class="notes"><p>Oh, thats right, I forgot, there is one more problem with the old way.</p></aside>
+</section>
+<section id="why-why.fail_some" class="slide" data-background="images/fail_some.png" data-background-size="60%">
+<aside class="notes"><p>What if some of the machines crashes? Might not be a problem
+at first; might be the service can handle getting fewer resources.</p></aside>
+</section>
+<section id="why-why.fail_all" class="slide" data-background="images/fail_all.png" data-background-size="60%">
+<aside class="notes"><p>But if all its machines crashes you got a big problem, and
+will spend at least some hours frantic hacking away at the keyboard
+trying to deploy the service to another machine that is not setup
+correctly for this service.</p></aside>
+</section>
+<section id="why-why.datacenter" class="slide" data-background="images/datacenter.png" data-background-size="60%">
+<aside class="notes"><p>These are some of the problems that Mesos is trying to solve.</p></aside>
+</section>
+<section id="why-why.cpus" class="slide" data-background="images/cpus.png" data-background-size="60%">
+<aside class="notes"><p>So, to summarize, take all the resources in a data center...</p></aside>
+</section>
+<section id="why-why.virtual_dc" class="slide" data-background="images/virtual_dc.png" data-background-size="60%">
+<aside class="notes"><p>...and put them all into the same logical machine which all services run on.</p></aside>
+</section>
+</section>
+<section id="what.2" class="slide">
+<h2>Features</h2><ul>
+<li>Highly-elastic, highly-available and fault-tolerant</li>
+<li>Makes it very easy to deploy new services</li>
+<li>Native isolation between tasks</li>
+<li>Can mix different types of workloads on the same machines</li>
+</ul><aside class="notes"><p>So then, what is Mesos really?</p>
+<p>Instead of sharing resources statically, Mesos will dynamically
+share the resources where they are needed, for example by putting
+a service on any machine which has room for more.</p>
+<p>And if a machine crashes or otherwise becomes unusable, all
+services running on that machine are moved to other machines.</p>
+<p>This also makes it very simple to deploy new services. No need
+for finding a machine for this and make changes in the configuration
+management tool.</p>
+<p>Just push a description of the service to Mesos and it will be
+started up on a machine that can handle it.</p>
+<p>It has native isolation between tasks either through cgroups or
+by deploying the services as Docker containers</p>
+<p>This is all well and good, but why choose this instead of some of
+the other offerings out there, like Kubernetes from Google? The
+big difference is that Mesos can share resources between many
+different workloads, like batch jobs, long-runnings jobs like
+webapps, Hadoop-jobs, Kafka, Jenkins, and so on.</p>
+<p>Let&#39;s take a look on a demo that show this quite well.</p></aside>
+</section>
+<section id="what.3" class="slide">
+<h2>Simple demo</h2><iframe style="width: 100%; height: 15em;" src="http://mesosphere.io/simulator/"></iframe><aside class="notes"><p>Here you have different types of workloads: Rails, Hadoop, Chronos for batch jobs, Cassandra and Spark. Now you see what happens when I add or remove services, delete or inactivates machines. Everything is elastic, well almost. There is no standard yet for spawning and deleting machines in response to increasing and decreasing load.</p></aside>
+</section>
+<section id="how" class="slide">
+<h2>How does it work?</h2><ul>
+<li>Two-level scheduling</li>
+<li>Cannot do anything with the resources itself</li>
+<li>Plugins, called frameworks, decides what to do with them</li>
+<li>All specific handling of different workloads are done
+through the frameworks</li>
+</ul><aside class="notes"><p>So how does this work? Mesis is a 2-level scheduler, which means
+it will find some idle resources and send these to plugins, or
+frameworks as they are called, and let them decide what to do
+with the resources.</p>
+<p>There already exists some frameworks and their not too hard to
+implement either.</p></aside>
+</section>
+<section id="frameworks" class="slide">
+<h2>Mesos Frameworks</h2><h3>Marathon, Kubernetes, Chronos, Kafka, Cassandra, Spark, Storm, Hadoop, Deis, Jenkins...</h3><aside class="notes"><p>And here we have some examples of existing frameworks.</p>
+<p>Marathon is the one used for long-running services, like webapps.
+Or one could choose to use a framework written for running Kubernetes
+in Mesos.</p>
+<p>Chronos is like a distributed cron with support for dependencies
+between jobs and good error handling.</p>
+<p>And many others. Even running build agents for a Jenkins cluster.</p>
+<p>Now, you don&#39;t want some build jobs to mess with the throughput of your
+production jobs, so you can specify that some frameworks are more important
+than others.</p></aside>
+</section>
+<section id="marathon-1" class="slide">
+<h2>Running this presentation <br> on Mesos</h2><aside class="notes"><p>As I told you, this presentation is now running on Mesos
+It is specifically using Marathon&#39;s support for long-running apps.</p></aside>
+</section>
+<section id="marathon-2" class="slide">
+<pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"docker-and-mesos-presentation"</span></span>,
+  "<span class="hljs-attribute">instances</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">cpus</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">mem</span>": <span class="hljs-value"><span class="hljs-number">50</span></span>,
+  "<span class="hljs-attribute">container</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"DOCKER"</span></span>,
+    "<span class="hljs-attribute">docker</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">image</span>": <span class="hljs-value"><span class="hljs-string">"stigkj/docker-and-mesos-presentation:${TAG}"</span></span>,
+      "<span class="hljs-attribute">network</span>": <span class="hljs-value"><span class="hljs-string">"BRIDGE"</span></span>,
+      "<span class="hljs-attribute">portMappings</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">servicePort</span>": <span class="hljs-value"><span class="hljs-number">28080</span></span>,
+          "<span class="hljs-attribute">containerPort</span>": <span class="hljs-value"><span class="hljs-number">80</span></span>,
+          "<span class="hljs-attribute">hostPort</span>": <span class="hljs-value"><span class="hljs-number">0</span></span>,
+          "<span class="hljs-attribute">protocol</span>": <span class="hljs-value"><span class="hljs-string">"tcp"</span>
+      ...</span></span></span></span>
+</code></pre><aside class="notes"><p>This is the configuration for running this presentation using Marathon on Mesos.
+Here you have how many instances you want, constraints on cpus and memory
+It specifies what it should run, here it is docker and the id of the docker image
+which holds the presentation. You also have some port mappings</p></aside>
+</section>
+<section id="marathon-3" class="slide">
+<pre><code>...
+  <span class="hljs-string">"healthChecks"</span>: [
+    {
+      <span class="hljs-string">"gracePeriodSeconds"</span>: <span class="hljs-number">120</span>,
+      <span class="hljs-string">"intervalSeconds"</span>: <span class="hljs-number">30</span>,
+      <span class="hljs-string">"maxConsecutiveFailures"</span>: <span class="hljs-number">3</span>,
+      <span class="hljs-string">"path"</span>: <span class="hljs-string">"/"</span>,
+      <span class="hljs-string">"portIndex"</span>: <span class="hljs-number">0</span>,
+      <span class="hljs-string">"protocol"</span>: <span class="hljs-string">"HTTP"</span>,
+      <span class="hljs-string">"timeoutSeconds"</span>: <span class="hljs-number">5</span>
+    }
+  ],
+  <span class="hljs-string">"constraints"</span>: [
+    [ <span class="hljs-string">"hostname"</span>, <span class="hljs-string">"UNIQUE"</span> ]
+  ]
+}
+</code></pre><aside class="notes"><p>You can define more stuff for a service, like a health check which
+stop the service if there is a problem.
+ and other constraints
+like only run one instance of this docker container on each host.</p>
+<p>As Marathon has a nice REST API, implementing stuff like rolling
+upgrade, etc. is quite easy.</p></aside>
+</section>
+<section id="the-end" class="slide">
+<h2>Still some stuff to figure out</h2><aside class="notes"><p>So, now everyone should deploy docker containers to mesos?
+I guess what I would want, is for people to try it out
+because having Docker&#39;s immutable image combined with Mesos
+and its features would make a lot of stuff easier.</p>
+<p>The biggest road block at the moment is probably networking,
+that is, how to share networks between containers, which
+would make it much easier wihtout jhaving to open ports in
+firewalls and stuff. There are some tools out there which
+helps in this. Docker has just aquired Socket plane which
+means they are serios about this. Weave is another tool
+in this area.</p></aside>
+</section>
+<section>
+
+</section>
+<section>
+
+</section></div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+    // Full list of configuration options available at:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+
+      transition: Reveal.getQueryHash().transition || 'slide', // none/fade/slide/convex/concave/zoom
+
+      // Optional reveal.js plugins
+      dependencies: [
+        //{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        //{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        //{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'plugin/zoom-js/zoom.js', async: true },
+        { src: 'plugin/notes/notes.js', async: true }
+      ]
+    });
+    </script>
+
+    <script src="js/dynamic-theme.js"></script><script src="js/such-notes-print.js"></script>
+
+  </body>
+</html>
